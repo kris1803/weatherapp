@@ -1,5 +1,5 @@
 
-# WeatherApp in MEN stack with MVC architecture
+# WeatherApp, a Fullstack application in MEN stack with MVC architecture
 
 Authorization : Signup, Signin. Stored in mongoDb.
 
@@ -11,6 +11,19 @@ Cities are saved to mongoDb, so they are persistent.
 Refresh button to refresh data for cities.
 Weather route is protected.
 
-To start:
-    - npm install
-    - npm start
+To start (in terminal):
+
+```bash
+npm install
+npm start
+```
+
+## Screenshots
+
+### Desktop version
+
+![alt text](/public/images/desktop_screenshot.png?raw=true "Desktop version")
+
+### Mobile version
+
+![alt text](/public/images/mobile_screenshot.png?raw=true "Mobile version")

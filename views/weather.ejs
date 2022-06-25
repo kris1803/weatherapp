@@ -17,23 +17,23 @@
 
 <body>
 	<!-- HEADER -->
-	<nav class="header navbar navbar-light bg-dark p-3 d-flex justify-content-between">
-		<a class="text-white" href="/weather">Weather App</a>
-		<a class="/users/logout" href="/logout">Deconnexion</a>
+	<nav class="header navbar navbar-light bg-dark p-3 d-flex justify-content-between shadow">
+		<a class="text-white" style="font-size: 20px;" href="/weather">Weather App</a>
+		<a class="/users/logout" href="/logout">Logout</a>
 	</nav>
 
 	<!-- GRID -->
-	<div class="container">
-		<div class="row justify-content-center">
-			<div class="col-10 col-lg-8 border border-muted pt-3 pb-3 mb-3 bg-light">
+	<div class="container-fluid p-0">
+		<div class="row justify-content-center p-0 m-0">
+			<div class="col-12 col-sm-10 col-lg-8 border border-muted pt-3 pb-3 bg-light">
 				<!-- boite principale -->
-				<div class="row justify-content-end">
+				<div class="row justify-content-end py-0 px-2">
 					<!-- la barre d'input -->
 					<div class="col-12 col-lg-6">
 						<!-- div avec l'input -->
-						<div class="container-fluid">
+						<div class="container-fluid p-0">
 							<form method='POST' action="/add-city"
-								class="d-flex p-0 justify-content-center row input-group">
+								class="d-flex justify-content-center row p-0 input-group m-0">
 								<input type="text" name="name" class="form-control w-auto d-inline"
 									placeholder="Enter city name">
 								<button type="submit" class="btn btn-warning w-auto">Add</button>
@@ -43,12 +43,12 @@
 
 					</div>
 				</div>
-				<div class="row mt-3">
+				<div class="row mt-3 mx-0">
 					<!-- division du contenu en 2 colonnes -->
 					<div class="col-12 col-lg-6 p-0">
 						<!-- partie avec la carte -->
 						<div class="container-fluid m-0 p-2">
-							<div id="worldmap" class="img-fluid"></div>
+							<div id="worldmap" class="img-fluid rounded-3"></div>
 						</div>
 					</div>
 					<div class="col-12 col-lg-6 d-flex flex-column align-items-center" style="font-size: 13px;">
