@@ -1,9 +1,10 @@
 {
   "name": "weatherapp",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "node ./bin/www",
+    "start:dev" : "nodemon ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",

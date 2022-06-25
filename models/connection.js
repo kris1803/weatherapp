@@ -1,5 +1,5 @@
 
-const dbLink = process.env.MONGODB_LINK;
+const dbLink = process.env.MONGODB_LINK || ' ';
 
 let mongoose = require('mongoose');
 // options

@@ -1,0 +1,4 @@
+- Replace sync request with axios
+- Refactor routes to more lisibility
+- add bcrypt
+- make better description in readme file
