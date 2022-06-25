@@ -1,6 +1,6 @@
-- Replace sync request with axios
+DONE - Replace sync request with axios
 - Refactor routes to more lisibility
 - add bcrypt
 - make better description in readme file
 - deploy to heroku
-- use english lang in openweather 
+DONE - use english lang in openweather 

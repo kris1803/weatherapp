@@ -1,11 +1,10 @@
-var express = require('express');
-var router = express.Router();
-var request = require('sync-request');
+let express = require('express');
+let router = express.Router();
+const axios = require('axios');
 
-var cityModel = require('../models/cities');
-var userModel = require('../models/users');
+let cityModel = require('../models/cities');
 
-const OPENWEATHERMAP_API_KEY = 'e64fb8049af8d4af879c22d12bc5d47e';
+const OPENWEATHERMAP_API_KEY = process.env.OPENWEATHERMAP_API_KEY;
 
 let cityList = [];
 async function updateList() {
@@ -15,79 +14,22 @@ updateList();
 
 /* GET home page. */
 router.get('/', function (req, res) {
-  res.render('login', { title: 'Weather App' });
-});
-
-router.post('/sign-up', async function (req, res) {
-  // check if post data received
-  if (req.body.email && req.body.password && req.body.username) {
-    // check if user already exists
-    let username = await userModel.findOne({ username: req.body.username });
-    let email = await userModel.findOne({ email: req.body.email });
-    if (email || username) {
-      res.render('login', { title: 'Weather App', error: 'User already exists' });
-      console.log('user already exists');
-      return;
-    }
-    // save informations from form in database
-    let newUser = new userModel({
-      username: req.body.username,
-      password: req.body.password,
-      email: req.body.email
-    });
-    newUser.save(function (err, user) {
-      if (err) {
-        console.log(err);
-        res.redirect('/');
-        return;
-      }
-      // utilisateur a été enregistré
-      req.session.username = user.username;
-      req.session._id = user._id;
-      res.redirect('/weather');
-    })
-
-  } else {
-    res.redirect('/');
-  }
-});
-
-router.post('/sign-in', function (req, res, next) {
-  // check if user exist in database
-  userModel.findOne({ email: req.body.email }, function (err, user) {
-    if (err) {
-      console.log(err);
-      res.redirect('/');
-    } else if (user) { // user exist
-      if (user.password === req.body.password) { // password correct
-        req.session.username = user.username;
-        req.session._id = user._id;
-        res.redirect('/weather');
-      } else { // password incorrect
-        res.redirect('/');
-      }
-    } else { // user doesn't exist
-      res.redirect('/');
-    }
-  });
-});
-
-router.get('/logout', function (req, res, next) {
-  req.session.destroy();
-  res.redirect('/');
+  res.render('login');
 });
 
 router.get('/weather', async function (req, res, next) {
-  if (req.session.username === undefined) {
+  if (typeof req.session.username === 'undefined') {
     res.redirect('/');
-  } else {
-    console.log('User connected: ' + req.session.username);
-    cityList = await cityModel.find();
-    res.render('weather', { cityList: cityList, error: '' });
+    return;
   }
+  cityList = await cityModel.find();
+  res.render('weather', { cityList: cityList, error: '' });
 });
 
 router.post('/add-city', async function (req, res, next) {
+  if (typeof req.session.username === 'undefined') {
+    res.redirect('/');
+  }
   // update citylist
   let cityList = await cityModel.find();
   var city = req.body.name;
@@ -96,12 +38,19 @@ router.post('/add-city', async function (req, res, next) {
   // to upper case first letter
   city = city.charAt(0).toUpperCase() + city.slice(1);
   // make api call with city
-  var dataAPI = request('GET', `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${OPENWEATHERMAP_API_KEY}&units=metric&lang=fr`);
-  var dataAPI = JSON.parse(dataAPI.body);
-  var error = '';
+  let dataAPI;
+  try {
+    dataAPI = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${OPENWEATHERMAP_API_KEY}&units=metric`);
+  } catch (error) {
+    console.log(error);
+    res.render('weather', { cityList: cityList, error: 'City not found.' });
+    return;
+  }
+  dataAPI = dataAPI.data;
+  let error = '';
   // handle received errors
   if (dataAPI.message) {
-    var error = dataAPI.message;
+    error = dataAPI.message;
   } else {
     // check if city is not already in the list and then push it
     var found = false;
@@ -129,11 +78,26 @@ router.post('/add-city', async function (req, res, next) {
 });
 
 router.get('/update-cities', async function (req, res) {
+  if (typeof req.session.username === 'undefined') {
+    res.redirect('/');
+    return;
+  }
   // mise à jour des villes une par une
-  for (var i = 0; i < cityList.length; i++) {
-    var name = cityList[i].name;
-    var dataAPI = request('GET', `https://api.openweathermap.org/data/2.5/weather?q=${name}&appid=${OPENWEATHERMAP_API_KEY}&units=metric&lang=fr`);
-    var dataAPI = JSON.parse(dataAPI.body);
+  for (let i = 0; i < cityList.length; i++) {
+    let name = cityList[i].name;
+    let response;
+    try {
+      response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${name}&appid=${OPENWEATHERMAP_API_KEY}&units=metric`);
+      if (response.statusText !== 'OK') {
+        console.log(response.statusText);
+        continue;
+      }
+    } catch (error) {
+      console.log(error);
+      res.render('weather', { cityList: cityList, error: 'Error while updating cities' });
+      return;
+    }
+    let dataAPI = response.data;
     await cityModel.updateOne({ name: name }, {
       img: 'http://openweathermap.org/img/wn/' + dataAPI.weather[0].icon + '@2x.png',
       weather: dataAPI.weather[0].description,
@@ -156,4 +120,5 @@ router.get('/delete-city', async function (req, res) {
 
   res.render('weather', { cityList: cityList, error: '' });
 });
+
 module.exports = router;

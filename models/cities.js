@@ -2,7 +2,10 @@ let mongoose = require('mongoose');
 // create schema citySchema
 
 let citySchema = mongoose.Schema({
-    name:String,
+    name: {
+        type: String,
+        required: true
+    },
     img:String,
     weather:String,
     min:Number,

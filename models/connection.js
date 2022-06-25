@@ -12,9 +12,10 @@ let options = {
 // mongoose connection with options mongodb+srv://kris1803:72bsI9dfviM90JUW@cluster0.lx56f.mongodb.net/weatherapp?retryWrites=true&w=majority
 mongoose.connect(dbLink, options, function(err) {
     if (err) {
-        console.log(err)
+        console.log(err);
+        process.exit(1);
     } else {
-        console.log('Connected to mongodb')
+        console.log('Connected to database.');
     }
 });
 
