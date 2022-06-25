@@ -6,6 +6,7 @@ let cityModel = require('../models/cities');
 
 const OPENWEATHERMAP_API_KEY = process.env.OPENWEATHERMAP_API_KEY;
 
+// the same citylist for everyone
 let cityList = [];
 async function updateList() {
   cityList = await cityModel.find();
@@ -22,6 +23,7 @@ router.get('/weather', async function (req, res, next) {
     res.redirect('/');
     return;
   }
+  // refreshing citylist each time the page is loaded
   cityList = await cityModel.find();
   res.render('weather', { cityList: cityList, error: '' });
 });

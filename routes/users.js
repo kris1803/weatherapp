@@ -1,6 +1,7 @@
 const express = require('express');
 let router = express.Router();
 const mailvalidator = require('email-validator');
+let bcrypt = require('bcryptjs');
 
 const userModel = require('../models/users');
 
@@ -27,6 +28,7 @@ router.post('/sign-up', async function (req, res) {
       res.render('login', { error: 'User already exists.' });
       return;
     }
+    const hash = await bcrypt.hash(req.body.password, 10);
     // save informations from form in database
     let newUser = new userModel({
       username: req.body.username,

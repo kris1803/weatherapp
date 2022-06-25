@@ -5,3 +5,4 @@ DONE - Refactor routes to more lisibility
 - deploy to heroku
 DONE - use english lang in openweather 
 - add index page (Home page)
+- make cities for each person (change architecture)
