@@ -31,6 +31,7 @@ a {
   text-shadow: 1px 1px 1px black;
   padding-top: 20px;
   padding-bottom: 20px;
+  
   min-height: 100vh;
   display: flex;
   align-items: center;

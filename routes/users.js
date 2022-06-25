@@ -11,7 +11,7 @@ router.get('/', function (req, res) {
 
 router.post('/sign-up', async function (req, res) {
   // check if post data received
-  if (req.body.email && req.body.password && req.body.username && mailvalidator.validate(req.body.email) && req.body.password.length >= 6) {
+  if (req.body.email && req.body.password && req.body.username && mailvalidator.validate(req.body.email) && req.body.password.length >= 6 && req.body.username.length >= 3) {
     // check if user already exists
     let username;
     let sameEmail;
@@ -51,7 +51,7 @@ router.post('/sign-up', async function (req, res) {
 
 router.post('/sign-in', function (req, res, next) {
   // check if post data received
-  if (!req.body.username || !req.body.password) {
+  if (!req.body.email || !req.body.password || !mailvalidator.validate(req.body.email)) {
     res.render('login', { error: 'Please enter a username and a password.' });
     return;
   }

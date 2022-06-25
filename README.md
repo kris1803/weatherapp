@@ -18,6 +18,8 @@ npm install
 npm start
 ```
 
+And open <http://localhost:3000/> in your browser.
+
 ## Screenshots
 
 ### Desktop version
