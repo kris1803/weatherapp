@@ -1,9 +1,9 @@
 
-const dbLink = 'mongodb+srv://kris1803:72bsI9dfviM90JUW@cluster0.lx56f.mongodb.net/weatherapp?retryWrites=true&w=majority';
+const dbLink = process.env.MONGODB_LINK;
 
 let mongoose = require('mongoose');
 // options
-var options = {
+let options = {
     connectTimeoutMS: 5000,
     useNewUrlParser: true,
     useUnifiedTopology : true
