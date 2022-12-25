@@ -1,39 +1,29 @@
-const express = require('express');
-let router = express.Router();
-const mailvalidator = require('email-validator');
-let bcrypt = require('bcryptjs');
-
+const express = require('../providers/express');
+const router = express.Router();
 const userModel = require('../models/users');
 
-/* GET users listing. */
+const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
 router.get('/', function (req, res) {
   res.redirect('/');
 });
 
 router.post('/sign-up', async function (req, res) {
-  // check if post data received
-  if (!req.body.email || !req.body.password || !req.body.password || !mailvalidator.validate(req.body.email) || req.body.password.length < 6 || req.body.username.length < 3) {
-    res.render('login', { error: 'Please fill in all fields correctly.' });
+  if (!req.body.email || !req.body.password || !req.body.email || !req.body.password) {
+    res.redirect('/');
     return;
   }
-
-  // if (req.body.email && req.body.password && req.body.username && mailvalidator.validate(req.body.email) && req.body.password.length >= 6 && req.body.username.length >= 3) {
+  if (!req.body.email.toLowerCase().match(emailRegex) || req.body.password.length < 6) {
+    res.redirect('/');
+    return;
+  }
   // check if user already exists
-  let username;
-  let sameEmail;
-  try {
-    username = await userModel.findOne({ username: req.body.username });
-    sameEmail = await userModel.findOne({ email: req.body.email });
-  } catch (error) {
-    console.log(error);
-    res.render('login', { error: 'Something went wrong.' });
+  let username = await userModel.findOne({ username: req.body.username });
+  let email = await userModel.findOne({ email: req.body.email });
+  if (email || username) {
+    res.redirect('/');
     return;
   }
-  if (sameEmail || username) {
-    res.render('login', { error: 'User already exists.' });
-    return;
-  }
-  const hash = await bcrypt.hash(req.body.password, 10);
   // save informations from form in database
   let newUser = new userModel({
     username: req.body.username,
@@ -43,42 +33,32 @@ router.post('/sign-up', async function (req, res) {
   newUser.save(function (err, user) {
     if (err) {
       console.log(err);
-      res.render('login', { error: 'Server error.' });
-      return;
+      res.redirect('/');
+    } else { // utilisateur a été enregistré
+      req.session.username = user.username;
+      req.session._id = user._id;
+      res.redirect('/weather');
     }
-    // utilisateur a été enregistré
-    req.session.username = user.username;
-    req.session._id = user._id;
-    res.redirect('/weather');
   })
-
 });
 
-router.post('/sign-in', function (req, res, next) {
-  // check if post data received
-  if (!req.body.email || !req.body.password || !mailvalidator.validate(req.body.email)) {
-    res.render('login', { error: 'Please enter a username and a password.' });
-    return;
-  }
-
+router.post('/sign-in', function (req, res) {
   // check if user exist in database
   userModel.findOne({ email: req.body.email }, function (err, user) {
     if (err) {
       console.log(err);
-      res.render('login', { error: 'An error occured (server).' });
-      return;
-    } else if (!user) { // user not exist
-      res.render('login', { error: 'User not found.' });
-      return;
+      res.redirect('/');
+    } else if (user) { // user exist
+      if (user.password === req.body.password) { // password correct
+        req.session.username = user.username;
+        req.session._id = user._id;
+        res.redirect('/weather');
+      } else { // password incorrect
+        res.redirect('/');
+      }
+    } else { // user doesn't exist
+      res.redirect('/');
     }
-    if (user.password !== req.body.password) { // password not correct
-      res.redirect('login', { error: 'Password not correct.' });
-      return;
-    }
-    req.session.username = user.username;
-    req.session._id = user._id;
-    res.redirect('/weather');
-    console.log('User connected: ' + req.session.username);
   });
 });
 

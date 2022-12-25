@@ -1,8 +1,0 @@
-DONE - Replace sync request with axios
-DONE - Refactor routes to more lisibility
-- add bcrypt
-- make better description in readme file
-- deploy to heroku
-DONE - use english lang in openweather 
-- add index page (Home page)
-- make cities for each person (change architecture)

@@ -1,99 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-	<%- include('./components/commonHead') %>
-	<script src="https://kit.fontawesome.com/a9f34edc21.js" crossorigin="anonymous"></script>
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" crossorigin="" />
-	<script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" crossorigin=""></script>
-	<title>WeatherApp</title>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+   <link rel="stylesheet" href="./styles/style.css">
+   <script src="https://kit.fontawesome.com/a9f34edc21.js" crossorigin="anonymous"></script>
+   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" crossorigin="" />
+   <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js" crossorigin=""></script>
+   <title>WeatherApp</title>
 </head>
-<!-- always give cityList -->
+
 <body>
-	<!-- HEADER -->
-	<nav class="header navbar navbar-light bg-dark p-3 d-flex justify-content-between shadow">
-		<a class="text-white" style="font-size: 20px;" href="/weather">Weather App</a>
-		<a href="/users/logout">Logout</a>
-	</nav>
+   <!-- HEADER -->
+   <nav class="header navbar navbar-light bg-dark p-3 d-flex justify-content-between">
+      <a class="text-white" href="/weather">Weather App</a>
+      <a class="/users/logout" href="/logout">Deconnexion</a>
+   </nav>
 
-	<!-- GRID -->
-	<div class="container-fluid p-0">
-		<div class="row justify-content-center p-0 m-0">
-			<div class="col-12 col-sm-10 col-lg-8 border border-muted pt-3 pb-3 bg-light">
-				<!-- boite principale -->
-				<div class="row justify-content-end py-0 px-2">
-					<!-- la barre d'input -->
-					<div class="col-12 col-lg-6">
-						<!-- div avec l'input -->
-						<div class="container-fluid p-0">
-							<form method='POST' action="/add-city"
-								class="d-flex justify-content-center row p-0 input-group m-0">
-								<input type="text" name="name" class="form-control w-auto d-inline"
-									placeholder="Enter city name">
-								<button type="submit" class="btn btn-warning w-auto">Add</button>
+   <!-- GRID -->
+   <div class="container">
+      <div class="row justify-content-center">
+         <div class="col-10 col-lg-8 border border-muted pt-3 pb-3 mb-3 bg-light">
+            <!-- boite principale -->
+            <div class="row justify-content-end">
+               <!-- la barre d'input -->
+               <div class="col-12 col-lg-6">
+                  <!-- div avec l'input -->
+                  <div class="container-fluid">
+                     <form method='POST' action="/add-city" class="d-flex p-0 justify-content-center row input-group">
+                        <input type="text" name="name" class="form-control w-auto d-inline"
+                           placeholder="Enter city name">
+                        <button type="submit" class="btn btn-warning w-auto">Add</button>
 
-							</form>
-						</div>
+                     </form>
+                  </div>
 
-					</div>
-				</div>
-				<div class="row mt-3 mx-0">
-					<!-- division du contenu en 2 colonnes -->
-					<div class="col-12 col-lg-6 p-0">
-						<!-- partie avec la carte -->
-						<div class="container-fluid m-0 p-2">
-							<div id="worldmap" class="img-fluid rounded-3"></div>
-						</div>
-					</div>
-					<div class="col-12 col-lg-6 d-flex flex-column align-items-center" style="font-size: 13px;">
-						<!-- partie avec le update cities -->
-						<div class="text-center w-100 mb-3 d-flex justify-content-center">
-							<div class="h6" id="updateCities">
-								<a href="/update-cities">Update Cities
-									<i class="fa-solid fa-arrows-rotate"></i>
-								</a>
-							</div>
-						</div>
-						<!-- les lignes de villes -->
-						<% for(var i=0; i<cityList.length; i++) {%>
-							<div style="height:45px"
-								class="city px-2 w-100 border border-infp d-flex justify-content-between align-items-center"
-								data-lon="<%= cityList[i].lon %>" 
-								data-lat="<%= cityList[i].lat %>">
-								<div class="cityName">
-									<%= cityList[i].name %>
-								</div>
-								<div class="center-info d-flex justify-content-center align-items-center">
-									<div class="mx-1">
-										<%= cityList[i].weather %>
-									</div>
-									<img src="<%= cityList[i].img %>" class="img-fluid" style="width:26px">
-									<div class="badge rounded-pill bg-warning text-dark">
-										<%= cityList[i].max %> °C
-									</div>
-									<div class="mx-1 badge rounded-pill bg-secondary">
-										<%= cityList[i].min %> °C
-									</div>
-								</div>
-								<div class="delete">
-									<a href="/delete-city?id=<%= i %>"><i class="fas fa-trash-alt"></i></a>
-								</div>
-							</div>
-							<% } %>
-								<% if(cityList.length <1) { %>
-									<%= "No cities found" %>
-										<% } %>
-											<%= error ? error : ' ' %>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+               </div>
+            </div>
+            <div class="row mt-3">
+               <!-- division du contenu en 2 colonnes -->
+               <div class="col-12 col-lg-6 p-0">
+                  <!-- partie avec la carte -->
+                  <div class="container-fluid m-0 p-2">
+                     <div id="worldmap" class="img-fluid"></div>
+                  </div>
+               </div>
+               <div class="col-12 col-lg-6 d-flex flex-column align-items-center" style="font-size: 13px;">
+                  <!-- partie avec le update cities -->
+                  <div class="text-center w-100 mb-3 d-flex justify-content-center">
+                     <div class="h6" id="updateCities">
+                        <a href="/update-cities">Update Cities
+                           <i class="fa-solid fa-arrows-rotate"></i>
+                        </a>
+                     </div>
+                  </div>
+                  <!-- les lignes de villes -->
+                  <% for(var i=0; i<cityList.length; i++) {%>
+                     <div style="height:45px"
+                        class="city px-2 w-100 border border-infp d-flex justify-content-between align-items-center"
+                        data-lon="<%= cityList[i].lon %>" data-lat="<%= cityList[i].lat %>">
+                        <div class="cityName">
+                           <%= cityList[i].name %>
+                        </div>
+                        <div class="center-info d-flex justify-content-center align-items-center">
+                           <div class="mx-1">
+                              <%= cityList[i].weather %>
+                           </div>
+                           <img src="<%= cityList[i].img %>" class="img-fluid" style="width:26px">
+                           <div class="badge rounded-pill bg-warning text-dark">
+                              <%= cityList[i].max %> °C
+                           </div>
+                           <div class="mx-1 badge rounded-pill bg-secondary">
+                              <%= cityList[i].min %> °C
+                           </div>
+                        </div>
+                        <div class="delete">
+                           <a href="/delete-city?id=<%= i %>"><i class="fas fa-trash-alt"></i></a>
+                        </div>
+                     </div>
+                     <% } %>
+                     <% if(cityList.length <1) { %>
+                        <%= "No cities found" %>
+                     <% } %>
+                     <%= error ? error : ' ' %>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
 
 
-	<script src='./scripts/script.js'></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-		crossorigin="anonymous"></script>
+   <script src='./scripts/script.js'></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"></script>
 </body>
 
 </html>
